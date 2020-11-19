@@ -1,5 +1,5 @@
 import os
-from flask import Flask
+from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask import request
@@ -24,7 +24,7 @@ class User(db.Model):
 class UserSchema(ma.SQLAlchemySchema):
     class Meta:
         model = User
-        fields = ("id", "name", "score")
+        fields = ("user_name", "score")
 
 
 db.create_all()
@@ -80,8 +80,9 @@ def get_all_score():
     result = ""
     users = db.session.query(User).all()
     if users:
+        print(users)
         result = user_schema.dump(users)
-    return result
+    return jsonify(result)
 
 
 if __name__ == '__main__':
