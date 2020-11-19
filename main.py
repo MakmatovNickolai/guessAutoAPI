@@ -53,7 +53,7 @@ def set_score():
 
 
 @app.route('/get_my_score', methods=['GET'])
-def set_score():
+def get_my_score():
     result = ""
     user_name = request.args.get('user_name')
     user = db.session.query(User).filter_by(user_name=user_name).first()
@@ -63,7 +63,7 @@ def set_score():
 
 
 @app.route('/get_all_score', methods=['GET'])
-def set_score():
+def get_all_score():
     result = ""
     users = db.session.query(User).all()
     if users:
