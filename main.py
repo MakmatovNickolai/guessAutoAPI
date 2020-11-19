@@ -51,8 +51,8 @@ def update_user_name():
     return result
 
 
-@app.route('/set_user', methods=['GET'])
-def set_user():
+@app.route('/set_new_user', methods=['GET'])
+def set_new_user():
     user_name = request.args.get('user_name')
     user = db.session.query(User).filter_by(user_name=user_name).first()
     result = "OK"
