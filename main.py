@@ -17,8 +17,7 @@ ma = Marshmallow(app)
 
 class User(db.Model):
     __tablename__ = 'user'
-    id = db.Column(db.String, primary_key=True)
-    user_name = db.Column(db.String(140))
+    user_name = db.Column(db.String(140), primary_key=True)
     score = db.Column(db.Integer)
 
 
@@ -36,6 +35,20 @@ user_schema = UserSchema(many=True)
 @app.route('/')
 def index():
     return "Hello, World!"
+
+
+@app.route('/set_new_user', methods=['GET'])
+def set_new_user():
+    user_name = request.args.get('user_name')
+    user = db.session.query(User).filter_by(user_name=user_name).first()
+    result = "OK"
+    if user:
+        result = "User exist"
+    else:
+        new_user = User(user_name=user_name, score=0)
+        db.session.add(new_user)
+    db.session.commit()
+    return result
 
 
 @app.route('/set_score', methods=['GET'])
