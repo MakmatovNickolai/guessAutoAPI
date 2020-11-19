@@ -37,8 +37,22 @@ def index():
     return "Hello, World!"
 
 
-@app.route('/set_new_user', methods=['GET'])
-def set_new_user():
+@app.route('/update_user_name', methods=['GET'])
+def update_user_name():
+    first_name = request.args.get('first_name')
+    second_name = request.args.get('second_name')
+    user = db.session.query(User).filter_by(user_name=first_name).first()
+    result = "OK"
+    if user:
+        user.user_name = second_name
+        db.session.commit()
+    else:
+        result = "User do not exist"
+    return result
+
+
+@app.route('/set_user', methods=['GET'])
+def set_user():
     user_name = request.args.get('user_name')
     user = db.session.query(User).filter_by(user_name=user_name).first()
     result = "OK"
@@ -47,7 +61,7 @@ def set_new_user():
     else:
         new_user = User(user_name=user_name, score=0)
         db.session.add(new_user)
-    db.session.commit()
+        db.session.commit()
     return result
 
 
