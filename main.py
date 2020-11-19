@@ -71,7 +71,7 @@ def get_my_score():
     user_name = request.args.get('user_name')
     user = db.session.query(User).filter_by(user_name=user_name).first()
     if user:
-        result = user.score
+        result = str(user.score)
     return result
 
 
