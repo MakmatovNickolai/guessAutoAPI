@@ -78,7 +78,7 @@ def get_my_score():
 @app.route('/get_all_score', methods=['GET'])
 def get_all_score():
     result = ""
-    users = db.session.query(User).all()
+    users = db.session.query(User).order_by(User.score.desc()).all()
     if users:
         print(users)
         result = user_schema.dump(users)
