@@ -74,7 +74,6 @@ def set_new_user():
     else:
         new_user = User(user_name=user_name, score=0)
         db.session.add(new_user)
-        user.user_name = second_name
         try:
             db.session.commit()
         except DatabaseError as e:
