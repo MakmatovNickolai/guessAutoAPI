@@ -44,15 +44,19 @@ def update_user_name():
     first_name = first_name.upper()
     second_name = second_name.upper()
     user = db.session.query(User).filter_by(user_name=first_name).first()
+    second_user = db.session.query(User).filter_by(second_name=first_name).first()
     result = "OK"
     if user:
-        user.user_name = second_name
-        try:
-            db.session.commit()
-        except DatabaseError as e:
-            db.session.rollback()
-            #result = str(e)
+        if second_user:
             result = "User exist"
+        else:
+            user.user_name = second_name
+            try:
+                db.session.commit()
+            except DatabaseError as e:
+                db.session.rollback()
+                #result = str(e)
+                result = "User exist"
 
     else:
         result = "User do not exist"
