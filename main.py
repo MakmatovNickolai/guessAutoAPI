@@ -34,7 +34,7 @@ user_schema = UserSchema(many=True)
 
 @app.route('/')
 def index():
-    return "Hello, World!"
+    return "Hello, Worl!"
 
 
 @app.route('/update_user_name', methods=['GET'])
@@ -44,7 +44,7 @@ def update_user_name():
     first_name = first_name.upper()
     second_name = second_name.upper()
     user = db.session.query(User).filter_by(user_name=first_name).first()
-    second_user = db.session.query(User).filter_by(second_name=first_name).first()
+    second_user = db.session.query(User).filter_by(user_name=second_name).first()
     result = "OK"
     if user:
         if second_user:
