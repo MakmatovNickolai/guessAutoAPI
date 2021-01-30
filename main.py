@@ -41,6 +41,8 @@ def index():
 def update_user_name():
     first_name = request.args.get('first_name')
     second_name = request.args.get('second_name')
+    first_name = first_name.upper()
+    second_name = second_name.upper()
     user = db.session.query(User).filter_by(user_name=first_name).first()
     result = "OK"
     if user:
@@ -54,6 +56,7 @@ def update_user_name():
 @app.route('/set_new_user', methods=['GET'])
 def set_new_user():
     user_name = request.args.get('user_name')
+    user_name = user_name.upper()
     user = db.session.query(User).filter_by(user_name=user_name).first()
     result = "OK"
     if user:
@@ -68,6 +71,7 @@ def set_new_user():
 @app.route('/set_score', methods=['GET'])
 def set_score():
     user_name = request.args.get('user_name')
+    user_name = user_name.upper()
     score = request.args.get('score')
     user = db.session.query(User).filter_by(user_name=user_name).first()
     if user:
@@ -83,6 +87,7 @@ def set_score():
 def get_my_score():
     result = ""
     user_name = request.args.get('user_name')
+    user_name = user_name.upper()
     user = db.session.query(User).filter_by(user_name=user_name).first()
     if user:
         result = str(user.score)
