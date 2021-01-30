@@ -47,7 +47,13 @@ def update_user_name():
     result = "OK"
     if user:
         user.user_name = second_name
-        db.session.commit()
+        try:
+            db.session.commit()
+        except DatabaseError as e:
+            db.session.rollback()
+            #result = str(e)
+            result = "User exist"
+
     else:
         result = "User do not exist"
     return result
@@ -64,7 +70,13 @@ def set_new_user():
     else:
         new_user = User(user_name=user_name, score=0)
         db.session.add(new_user)
-        db.session.commit()
+        user.user_name = second_name
+        try:
+            db.session.commit()
+        except DatabaseError as e:
+            db.session.rollback()
+            # result = str(e)
+            result = "User exist"
     return result
 
 
@@ -74,13 +86,19 @@ def set_score():
     user_name = user_name.upper()
     score = request.args.get('score')
     user = db.session.query(User).filter_by(user_name=user_name).first()
+    result = "OK"
     if user:
         user.score = score
     else:
         new_user = User(user_name=user_name, score=score)
         db.session.add(new_user)
-    db.session.commit()
-    return "OK"
+    try:
+        db.session.commit()
+    except DatabaseError as e:
+        db.session.rollback()
+        # result = str(e)
+        result = "User exist"
+    return result
 
 
 @app.route('/get_my_score', methods=['GET'])
