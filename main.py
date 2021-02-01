@@ -19,6 +19,7 @@ class User(db.Model):
     __tablename__ = 'user'
     user_name = db.Column(db.String(140), primary_key=True)
     score = db.Column(db.Integer)
+    device_id = db.Column(db.String(140))
 
 
 class UserSchema(ma.SQLAlchemySchema):
@@ -66,13 +67,14 @@ def update_user_name():
 @app.route('/set_new_user', methods=['GET'])
 def set_new_user():
     user_name = request.args.get('user_name')
+    device_id = request.args.get('device_id')
     user_name = user_name.upper()
     user = db.session.query(User).filter_by(user_name=user_name).first()
     result = "OK"
     if user:
         result = "User exist"
     else:
-        new_user = User(user_name=user_name, score=0)
+        new_user = User(user_name=user_name, score=0, device_id=device_id)
         db.session.add(new_user)
         try:
             db.session.commit()
@@ -112,6 +114,16 @@ def get_my_score():
     user = db.session.query(User).filter_by(user_name=user_name).first()
     if user:
         result = str(user.score)
+    return result
+
+
+@app.route('/get_my_username', methods=['GET'])
+def get_my_username():
+    result = ""
+    device_id = request.args.get('device_id')
+    user = db.session.query(User).filter_by(device_id=device_id).first()
+    if user:
+        result = str(user.user_name)
     return result
 
 
