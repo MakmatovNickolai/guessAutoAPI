@@ -1,1 +1,1 @@
-web: python main.py db init
+web: python main.py db migrate
