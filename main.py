@@ -3,6 +3,9 @@ from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask import request
+from flask_script import Manager
+from flask_migrate import Migrate, MigrateCommand
+from sqlalchemy.exc import DatabaseError
 
 app = Flask(__name__)
 
@@ -14,6 +17,11 @@ app.config['SQLALCHEMY_DATABASE_URI'] = f'postgres://wquwwskhrostuu:3060fc022870
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
 
+
+migrate = Migrate(app, db)
+manager = Manager(app)
+
+manager.add_command('db', MigrateCommand)
 
 class User(db.Model):
     __tablename__ = 'user'
@@ -138,5 +146,6 @@ def get_all_score():
 
 
 if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=port, debug=True)
+    manager.run()
+    #port = int(os.environ.get("PORT", 5000))
+    #app.run(host='0.0.0.0', port=port, debug=True)
