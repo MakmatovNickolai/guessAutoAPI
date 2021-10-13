@@ -34,26 +34,29 @@ class User(db.Model):
 class UserSchema(ma.SQLAlchemySchema):
     class Meta:
         model = User
-        fields = ("user_name", "score")
+        fields = ("user_name", "score", "url")
 
 
 db.create_all()
 
 user_schema = UserSchema(many=True)
+user_schema_one = UserSchema()
 
 
 @app.route('/')
 def index():
-    return "Hello, Worl!"
+    return "Hello, Wor!"
 
 
 @app.route('/update_user_name', methods=['GET'])
 def update_user_name():
     first_name = request.args.get('first_name')
     second_name = request.args.get('second_name')
-    first_name = first_name.upper()
-    second_name = second_name.upper()
-    user = db.session.query(User).filter_by(user_name=first_name).first()
+    device_id = request.args.get('device_id')
+    if not device_id:
+        user = db.session.query(User).filter_by(user_name=first_name).first()
+    else:
+        user = db.session.query(User).filter_by(user_name=first_name, device_id=device_id).first()
     second_user = db.session.query(User).filter_by(user_name=second_name).first()
     result = "OK"
     if user:
@@ -77,7 +80,6 @@ def update_user_name():
 def set_new_user():
     user_name = request.args.get('user_name')
     device_id = request.args.get('device_id')
-    user_name = user_name.upper()
     user = db.session.query(User).filter_by(user_name=user_name).first()
     result = "OK"
     if user:
@@ -97,9 +99,12 @@ def set_new_user():
 @app.route('/set_score', methods=['GET'])
 def set_score():
     user_name = request.args.get('user_name')
-    user_name = user_name.upper()
     score = request.args.get('score')
-    user = db.session.query(User).filter_by(user_name=user_name).first()
+    device_id = request.args.get('device_id')
+    if not device_id:
+        user = db.session.query(User).filter_by(user_name=user_name).first()
+    else:
+        user = db.session.query(User).filter_by(user_name=user_name, device_id=device_id).first()
     result = "OK"
     if user:
         user.score = score
@@ -119,7 +124,6 @@ def set_score():
 def get_my_score():
     result = ""
     user_name = request.args.get('user_name')
-    user_name = user_name.upper()
     user = db.session.query(User).filter_by(user_name=user_name).first()
     if user:
         result = str(user.score)
@@ -165,7 +169,11 @@ def get_all_score():
 def set_user_image():
     user_name = request.args.get('user_name')
     url = request.args.get('url')
-    user = db.session.query(User).filter_by(user_name=user_name).first()
+    device_id = request.args.get('device_id')
+    if not device_id:
+        user = db.session.query(User).filter_by(user_name=user_name).first()
+    else:
+        user = db.session.query(User).filter_by(user_name=user_name, device_id=device_id).first()
     result = "OK"
     if user:
         user.url = url
@@ -177,7 +185,17 @@ def set_user_image():
         db.session.rollback()
         # result = str(e)
         result = "Database error"
-    return jsonify(result)
+    return result
+
+
+@app.route('/get_my_info', methods=['GET'])
+def get_my_info():
+    result = ""
+    device_id = request.args.get('device_id')
+    user = db.session.query(User).filter_by(device_id=device_id).first()
+    if user:
+        result = user_schema_one.dump(user)
+    return result
 
 
 if __name__ == '__main__':
