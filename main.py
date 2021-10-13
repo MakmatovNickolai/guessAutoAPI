@@ -28,6 +28,7 @@ class User(db.Model):
     user_name = db.Column(db.String(140), primary_key=True)
     score = db.Column(db.Integer)
     device_id = db.Column(db.String(140))
+    url = db.Column(db.String(140))
 
 
 class UserSchema(ma.SQLAlchemySchema):
@@ -135,6 +136,21 @@ def get_my_username():
     return result
 
 
+@app.route('/get_top_score', methods=['GET'])
+def get_top_score():
+    result = ""
+    page = request.args.get('page')
+    per_page = 25
+    users = db.session.query(User)\
+        .filter(User.score != 0)\
+        .order_by(User.score.desc())\
+        .paginate(int(page), per_page, False).items
+    if users:
+        #print(users)
+        result = user_schema.dump(users)
+    return jsonify(result)
+
+
 @app.route('/get_all_score', methods=['GET'])
 def get_all_score():
     result = ""
@@ -145,7 +161,36 @@ def get_all_score():
     return jsonify(result)
 
 
+@app.route('/set_user_image', methods=['GET'])
+def set_user_image():
+    user_name = request.args.get('user_name')
+    url = request.args.get('url')
+    user = db.session.query(User).filter_by(user_name=user_name).first()
+    result = "OK"
+    if user:
+        user.url = url
+    else:
+        result = "No such user"
+    try:
+        db.session.commit()
+    except DatabaseError as e:
+        db.session.rollback()
+        # result = str(e)
+        result = "Database error"
+    return jsonify(result)
+
+
 if __name__ == '__main__':
-    #manager.run()
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=port, debug=True)
+    #manager.run() # для миграции?
+    port = int(os.environ.get("PORT", 5000)) # в хероку надо так
+    app.run(host='0.0.0.0', port=port, debug=True) # запуск серва
+
+    # для миграции сначала меняю колонки в объекте User, надо еще manager.run() запустить, а сервер (app.run) выключить
+    # затем запускаю команду:
+    # python main.py db migrate
+    #INFO  [alembic.autogenerate.compare] Detected added column 'user.url'
+
+    # затем
+    # python main.py db upgrade
+    # Running upgrade 19dddc5428db -> 626eaa4c7cd8, empty message
+
