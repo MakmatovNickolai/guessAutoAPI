@@ -11,8 +11,8 @@ app = Flask(__name__)
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS '] = False
 
-sqlite_connection_string = f'postgres://wquwwskhrostuu:3060fc022870e6b07fd4cbe169d8e74e221eea4b854de98c095e79b16ba1877c@ec2-3-213-106-122.compute-1.amazonaws.com:5432/d73s790537cjfv'
-app.config['SQLALCHEMY_DATABASE_URI'] = f'postgres://wquwwskhrostuu:3060fc022870e6b07fd4cbe169d8e74e221eea4b854de98c095e79b16ba1877c@ec2-3-213-106-122.compute-1.amazonaws.com:5432/d73s790537cjfv'
+sqlite_connection_string = f'postgres://wgeshzvo:iKEPHBxtlvyp1HCFla-vhbvgkKUDQZfh@mouse.db.elephantsql.com/wgeshzvo'
+app.config['SQLALCHEMY_DATABASE_URI'] = f'postgres://wgeshzvo:iKEPHBxtlvyp1HCFla-vhbvgkKUDQZfh@mouse.db.elephantsql.com/wgeshzvo'
 
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
